@@ -1,0 +1,523 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property</title>
+    <link rel="icon" href="{% static 'location_icon.png' %}">
+    <link href='https://fonts.googleapis.com/css?family=Alkalami' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/366a5ba087.js" crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+
+    <style>
+        html,
+        body {
+            background: url("{% static 'property_bg.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            background-color: black;
+            font-family: 'Alkalami';
+            color: black;
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+
+        #map {
+            height: 200px;
+            width: 200px;
+            border: 8px solid #4EA685;
+            border-radius: 10px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card img {
+            transition: transform 0.3s ease;
+        }
+
+        .footer-link {
+            text-decoration: none;
+            color: white;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+
+        .footer-link:hover {
+            color: #4EA685 !important;
+            text-decoration: underline;
+        }
+
+        .footer h6 {
+            font-weight: bold;
+            font-size: 28px;
+        }
+
+        .footer-link i {
+            transition: transform 0.3s ease, color 0.3s ease;
+            font-size: 40px;
+        }
+
+        .footer-link i:hover {
+            transform: translateY(-5px);
+            color: #4EA685;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .gradient-wave-text {
+            background: linear-gradient(45deg, #4EA685, #ff6347, #ffd700, #32cd32, #8a2be2, #ff1493, #00bfff, #ff4500);
+            background-size: 300% 300%;
+            color: transparent;
+            font-size: 20px;
+            font-weight: bold;
+            display: inline-block;
+            animation: gradientWave 4s ease infinite;
+            transition: background 0.3s ease;
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        @keyframes gradientWave {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+
+            <div class="container-fluid">
+
+                <a class="navbar-brand" href="/property/">
+                    <h2 style="color: #4EA685; font-family: 'Alkalami';">Property Finder <i style="color: red;"
+                            class="fa-solid fa-location-dot"></i>
+                    </h2>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0" style="font-size: 20px;">
+
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/property/"> Home </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#contacts"> Contact </a>
+                        </li>
+
+                        {% if not is_subscribed %}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/subscription/" target="_blank">
+                                <span class="gradient-wave-text" title="Subscribe">Premium</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <p> </p>
+                        {% endif %}
+
+
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal"
+                                data-bs-target="#sellPropertyModal">
+                                Sell Property
+                            </button>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="/my_adds/"><button type="button" class="btn btn-primary">My Adds</button></a>
+                        </li>
+
+                    </ul>
+
+                    <span>
+                        <div>
+                            <a class="nav-link active text-white" style="font-size: 20px;" data-bs-toggle="modal"
+                                data-bs-target="#nameModal" role="button"><img
+                                    src="../../media/{{profile_pic.profile_pic}}/" style="border-radius: 8px;"
+                                    height="35px" width="35px"> -
+                                {{profiles.username}}
+                            </a>
+                        </div>
+                    </span>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+    <div class="content">
+
+        <div class="modal fade" id="nameModal" tabindex="-1" aria-labelledby="nameModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="nameModalLabel"><i class="fa-solid fa-user"></i>
+                            {{ profiles.username }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card p-2">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td rowspan="8">
+                                            <a href="/delete_profile_pic/{{ profile_pic.id }}/"
+                                                title="Remove Profile Image">
+                                                <i class="fa-solid fa-circle-xmark"></i>
+                                            </a>
+                                        </td>
+                                        <td rowspan="8">
+                                            {% if profile_pic %}
+                                            <img src="/media/{{ profile_pic.profile_pic }}"
+                                                style="border-radius: 200px;" height="150px" width="150px"
+                                                alt="profile_pic">
+                                            {% else %}
+                                            <img src="https://via.placeholder.com/120" style="border-radius: 200px;"
+                                                height="150px" width="150px" alt="profile_pic">
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Username : </b>{{ profiles.username }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Email : </b>{{ profiles.email }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <form action="/profile_pic/{{ profiles.id }}/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="profile_pic" class="form-label">Change Profile Picture</label>
+                                    <input type="file" class="form-control" name="profile_pic" id="profile_pic"
+                                        required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="/logout/"><button type="button" class="btn btn-danger">Logout</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Sell Property Modal -->
+        <div class="modal fade" id="sellPropertyModal" tabindex="-1" aria-labelledby="sellPropertyModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="sellPropertyModalLabel">Sell Your Property 💱</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="/property/" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="propertyname" class="form-label">Property Name</label>
+                                <input type="text" class="form-control" name="propertyname"
+                                    placeholder="Enter property name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price</label>
+                                <input type="number" class="form-control" name="price" placeholder="Enter Price"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <select name="state" class="form-select">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="andhra_pradesh">Andhra Pradesh</option>
+                                    <option value="arunachal_pradesh">Arunachal Pradesh</option>
+                                    <option value="assam">Assam</option>
+                                    <option value="bihar">Bihar</option>
+                                    <option value="chhattisgarh">Chhattisgarh</option>
+                                    <option value="goa">Goa</option>
+                                    <option value="gujarat">Gujarat</option>
+                                    <option value="haryana">Haryana</option>
+                                    <option value="himachal_pradesh">Himachal Pradesh</option>
+                                    <option value="jharkhand">Jharkhand</option>
+                                    <option value="karnataka">Karnataka</option>
+                                    <option value="kerala">Kerala</option>
+                                    <option value="madhya_pradesh">Madhya Pradesh</option>
+                                    <option value="maharashtra">Maharashtra</option>
+                                    <option value="manipur">Manipur</option>
+                                    <option value="meghalaya">Meghalaya</option>
+                                    <option value="mizoram">Mizoram</option>
+                                    <option value="nagaland">Nagaland</option>
+                                    <option value="odisha">Odisha</option>
+                                    <option value="punjab">Punjab</option>
+                                    <option value="rajasthan">Rajasthan</option>
+                                    <option value="sikkim">Sikkim</option>
+                                    <option value="tamil_nadu">Tamil Nadu</option>
+                                    <option value="telangana">Telangana</option>
+                                    <option value="tripura">Tripura</option>
+                                    <option value="uttar_pradesh">Uttar Pradesh</option>
+                                    <option value="uttarakhand">Uttarakhand</option>
+                                    <option value="west_bengal">West Bengal</option>
+                                    <option value="andaman_nicobar">Andaman and Nicobar Islands</option>
+                                    <option value="chandigarh">Chandigarh</option>
+                                    <option value="dadra_nagar_haveli_daman_diu">Dadra and Nagar Haveli and Daman and
+                                        Diu</option>
+                                    <option value="delhi">Delhi</option>
+                                    <option value="jammu_kashmir">Jammu and Kashmir</option>
+                                    <option value="ladakh">Ladakh</option>
+                                    <option value="lakshadweep">Lakshadweep</option>
+                                    <option value="puducherry">Puducherry</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" class="form-control" name="city" placeholder="Enter City" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="area" class="form-label">Area</label>
+                                <input type="text" class="form-control" name="area" placeholder="Enter Area" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="pincode" class="form-label">Pincode</label>
+                                <input type="text" class="form-control" name="pincode" placeholder="Enter Pincode"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="latitude" class="form-label">Latitude</label>
+                                <input type="number" step="0.000001" class="form-control" name="latitude"
+                                    placeholder="Enter Latitude" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="longitude" class="form-label">Longitude</label>
+                                <input type="number" step="0.000001" class="form-control" name="longitude"
+                                    placeholder="Enter Longitude" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="mobile" class="form-label">Mobile</label>
+                                <input type="number" class="form-control" name="mobile" placeholder="Enter Mobile"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" placeholder="Enter Email"
+                                    required>
+                                <p style="font-size: 12px; color: red;">* Use same email used during Sign up</p>
+                            </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Upload Property Image</label>
+                                <input type="file" class="form-control" name="image" required>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" name="propertynames" class="btn btn-success">Register</button>
+                            </div>
+                        </form>
+                        {% for message in messages %}
+                        <h5 class="text-success">{{message}}</h5>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Filter -->
+                <div class="col-md-3">
+                    <div class="container p-5 glass-effect" style="margin-top: 100px;">
+                        <h2><i class="fa-solid fa-filter"></i> Filter</h2>
+                        <hr>
+
+                        <form method="post" action="/property/" class="mt-5">
+                            {% csrf_token %}
+
+                            <label>
+                                <h4>City</h4>
+                            </label>
+                            <input type="text" class="form-control" name="city" value="{{ request.POST.city }}"
+                                placeholder="City name">
+                            <hr>
+
+                            <label>
+                                <h4>Area</h4>
+                            </label>
+                            <input type="text" class="form-control" name="area" value="{{ request.POST.area }}"
+                                placeholder="Area name">
+                            <hr>
+
+                            <button type="submit" class="btn btn-primary" name="filter">Filter</button>
+                        </form><hr><hr>
+
+                        <h2 class="mt-5"><i class="fa-solid fa-sort"></i> Sort</h2>
+                        <hr>
+
+                        <form method="GET" class="mb-3">
+                            <select name="sort_by" class="form-select" onchange="this.form.submit()">
+                                <option value="">Sort by Price</option>
+                                <option value="price_low_to_high" {% if request.GET.sort_by == 'price_low_to_high' %}selected{% endif %}>Price: Low to High</option>
+                                <option value="price_high_to_low" {% if request.GET.sort_by == 'price_high_to_low' %}selected{% endif %}>Price: High to Low</option>
+                            </select>
+                        </form>
+
+                    </div>
+                </div>
+
+                <!-- Property -->
+                <div class="col-md-9">
+                    <div class="container p-5 rounded glass-effect" style="margin-top: 100px;">
+                        <h1>Properties for Sell</h1>
+                        <div class="container mt-5">
+                            <div class="row">
+                                {% for prop in properties_add %}
+                                <div class="col-md-4">
+                                    <div class="card mt-2 position-relative" style="width: 20rem;">
+
+                                        <button class="btn btn-light position-absolute" style="top: 10px; right: 10px;"
+                                            onclick="shareProperty('{{ prop.propertyname }}', '{{ prop.price }}', 
+                                            '{{ prop.city }}', '{{ prop.state }}', '{{ prop.latitude }}', 
+                                            '{{ prop.longitude }}')" title="Share">
+                                            <i class="fa-solid fa-share"></i>
+                                        </button> <!-- Share -->
+
+                                        <img src="/media/{{ prop.image }}" height="250px" class="card-img-top"
+                                            alt="...">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Name : {{ prop.propertyname }}</h5>
+                                            <p class="card-text">Price : {{ prop.price }} ₹</p>
+                                            <p class="card-text">Area : {{ prop.area }}</p>
+                                            <p class="card-text">City : {{ prop.city }}</p>
+                                            <p class="card-text">State : {{ prop.state }}</p>
+
+                                            <div class="d-flex justify-content-between">
+                                                {% if is_subscribed %}
+                                                <a href="https://www.google.com/maps/dir//{{ prop.latitude }},{{ prop.longitude }}/@19.9909572,73.7462125,761m/data=!3m2!1e3!4b1!4m2!4m1!3e9?entry=ttu&g_ep=EgoyMDI0MTEyNC4xIKXMDSoASAFQAw%3D%3D"
+                                                    class="btn btn-primary" title="View on Google Map"
+                                                    target="_blank">Google Map</a>
+
+                                                <form method="POST" class="d-inline"
+                                                    onsubmit="return sendContactAlert('{{ prop.propertyname }}')">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="property_id" value="{{ prop.id }}">
+                                                    <button type="submit" name="contact"
+                                                        class="btn btn-success">Contact</button>
+                                                </form>
+                                                {% else %}
+                                                <button class="btn btn-secondary" disabled>Google Map</button>
+                                                <button class="btn btn-secondary" disabled>Contact</button>
+                                            {% endif %}
+                                            </div>
+                                            
+                                            {% if not is_subscribed %}
+                                            <p class="text-primary">Please buy Premium to access <b>Contact</b> and <b>Google Map</b>.</p>
+                                            {% endif %}
+
+                                            <hr>
+                                            <p class="mb-0"><b>Contact </b> button will send an email to
+                                                the owner and user. Property owner will email you their contact details.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <script>
+
+        function sendContactAlert(propertyName) {
+            alert("The mail has been sent to the owner of the property: " + propertyName + ". The owner will contact you soon.");
+            return true;
+        }
+    </script>
+
+
+    <script>
+
+        function shareProperty(name, price, city, state, latitude, longitude) {
+            const url = `https://www.google.com/maps/dir//${latitude},${longitude}`;
+            const text = `Check out this property:\n\nName: ${name}\nPrice: ${price} ₹\nCity: ${city}, ${state}\n\nView on Map: ${url}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: `Property: ${name}`,
+                    text: text,
+                    url: url,
+                })
+                    .then(() => console.log('Property shared successfully.'))
+                    .catch((error) => console.error('Error sharing property:', error));
+            } else {
+                alert('Sharing is not supported on this browser.');
+            }
+        }
+    </script>
+
+
+
+
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

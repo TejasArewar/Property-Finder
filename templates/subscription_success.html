@@ -1,0 +1,208 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Finder</title>
+    <link rel="icon" href="{% static 'location_icon.png' %}">
+    <link href='https://fonts.googleapis.com/css?family=Alkalami' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/366a5ba087.js" crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        html,
+        body {
+            background: url("{% static 'property_bg.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            background-color: black;
+            font-family: 'Alkalami';
+            color: black;
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .row {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px;
+        }
+
+        .card-body {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4EA685;
+            margin-bottom: 1rem;
+        }
+
+        .card-text {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .list-unstyled {
+            text-align: left;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .list-unstyled i {
+            color: #4EA685;
+            margin-right: 10px;
+        }
+
+        .btn-subscribe {
+            background-color: #4EA685;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            width: 70%;
+            cursor: pointer;
+        }
+
+        .btn-subscribe:hover {
+            background-color: #3b8a68;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card img {
+            transition: transform 0.3s ease;
+        }
+
+        .footer-link {
+            text-decoration: none;
+            color: white;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+
+        .footer-link:hover {
+            color: #4EA685 !important;
+            text-decoration: underline;
+        }
+
+        .footer h6 {
+            font-weight: bold;
+            font-size: 28px;
+        }
+
+        .footer-link i {
+            transition: transform 0.3s ease, color 0.3s ease;
+            font-size: 40px;
+        }
+
+        .footer-link i:hover {
+            transform: translateY(-5px);
+            color: #4EA685;
+        }
+
+        .glass-effect {
+            color: black;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/property/">
+                    <h2 style="color: #4EA685; font-family: 'Alkalami';">Property Finder <i style="color: red;"
+                            class="fa-solid fa-location-dot"></i></h2>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0" style="font-size: 20px;">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Services</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Contact</a></li>
+                    </ul>
+                    <span>
+                        <div>
+                            <a class="nav-link active text-white" style="font-size: 20px;" aria-current="page"
+                                href="/login/" target="_blank">Login <i class="fa-solid fa-right-to-bracket"></i></a>
+                        </div>
+                    </span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="content">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-12">
+                    <div class="alert alert-success glass-effect">
+                        <h4 class="alert-heading">Welcome to Premium</h4>
+                        <p>You has been successfully subscribed to Property Finder Premium.<br>
+                            Payment ID: <strong>{{payment_id }}</strong>
+                        </p>
+                        <hr>
+                        <p class="mb-0"><a href="/property/"
+                                style="text-decoration: none; font-size: 18px; font-weight: bold;">Click Here</a> to
+                            access all Features.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

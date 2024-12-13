@@ -1,0 +1,271 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Adds</title>
+    <link rel="icon" href="{% static 'location_icon.png' %}">
+    <link href='https://fonts.googleapis.com/css?family=Alkalami' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/366a5ba087.js" crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+
+    <style>
+        html,
+        body {
+            background: url("{% static 'property_bg.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            background-color: black;
+            font-family: 'Alkalami';
+            color: black;
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+
+        #map {
+            height: 200px;
+            width: 200px;
+            border: 8px solid #4EA685;
+            border-radius: 10px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card img {
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover img {
+            transform: scale(1.05);
+        }
+
+        .footer-link {
+            text-decoration: none;
+            color: white;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+
+        .footer-link:hover {
+            color: #4EA685 !important;
+            text-decoration: underline;
+        }
+
+        .footer h6 {
+            font-weight: bold;
+            font-size: 28px;
+        }
+
+        .footer-link i {
+            transition: transform 0.3s ease, color 0.3s ease;
+            font-size: 40px;
+        }
+
+        .footer-link i:hover {
+            transform: translateY(-5px);
+            color: #4EA685;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+
+            <div class="container-fluid">
+
+                <a class="navbar-brand" href="/property/">
+                    <h2 style="color: #4EA685; font-family: 'Alkalami';">Property Finder <i style="color: red;"
+                            class="fa-solid fa-location-dot"></i>
+                    </h2>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0" style="font-size: 20px;">
+
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#"> Home </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#"> Services </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#"> About us</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#"> Contact </a>
+                        </li>
+
+                    </ul>
+
+                    <span>
+                        <div>
+                            <a class="nav-link active text-white" style="font-size: 20px;" data-bs-toggle="modal"
+                                data-bs-target="#nameModal" role="button"><img
+                                    src="../../media/{{profile_pic.profile_pic}}/" style="border-radius: 8px;"
+                                    height="35px" width="35px"> -
+                                {{profiles.username}}
+                            </a>
+                        </div>
+                    </span>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+    <div class="content">
+
+        <!--Profile Modal -->
+        <div class="modal fade" id="nameModal" tabindex="-1" aria-labelledby="nameModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="nameModalLabel"><i class="fa-solid fa-user"></i>
+                            {{ profiles.username }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card p-2">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td rowspan="8">
+                                            <a href="/delete_profile_pic/{{ profile_pic.id }}/"
+                                                title="Remove Profile Image">
+                                                <i class="fa-solid fa-circle-xmark"></i>
+                                            </a>
+                                        </td>
+                                        <td rowspan="8">
+                                            {% if profile_pic %}
+                                            <img src="/media/{{ profile_pic.profile_pic }}"
+                                                style="border-radius: 200px;" height="150px" width="150px"
+                                                alt="profile_pic">
+                                            {% else %}
+                                            <img src="https://via.placeholder.com/120" style="border-radius: 200px;"
+                                                height="150px" width="150px" alt="profile_pic">
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Username : </b>{{ profiles.username }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Email : </b>{{ profiles.email }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <form action="/profile_pic/{{ profiles.id }}/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="profile_pic" class="form-label">Change Profile Picture</label>
+                                    <input type="file" class="form-control" name="profile_pic" id="profile_pic"
+                                        required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="/logout/"><button type="button" class="btn btn-danger">Logout</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-md-12">
+            <div class="container p-5 rounded glass-effect" style="margin-top: 100px;">
+                <h2>Your Adds in Property Finder</h2>
+                <div class="container mt-5">
+                    <div class="row">
+                        {% if properties %}
+                        {% for prop in properties %}
+                        <div class="col-md-4">
+                            <div class="card mt-2" style="width: 20rem;">
+        
+                                <img src="/media/{{ prop.image }}" height="250px" class="card-img-top" alt="Property Image">
+                                <div class="card-body">
+                                    <h5 class="card-title">Name: {{ prop.propertyname }}</h5>
+                                    <p class="card-text">Price: {{ prop.price }} ₹</p>
+                                    <p class="card-text">State: {{ prop.state }}</p>
+                                    <p class="card-text">City: {{ prop.city }}</p>
+                                    <p class="card-text">Area: {{ prop.area }}</p>
+                                    <p class="card-text">Pincode: {{ prop.pincode }}</p>
+                                    <p class="card-text">Mobile: {{ prop.mobile }}</p>
+                                    <p class="card-text">Email: {{ prop.email }}</p>
+        
+                                    <a href="/edit_prop/{{ prop.id }}/"><button class="btn btn-primary">Edit</button></a>
+                                    <a href="/delete_prop/{{ prop.id }}/" class="btn btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+        
+                        {% endfor %}
+                        {% else %}
+                        <h4>You have not placed any ads yet.</h4>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+
+
+
+
+    </div>
+
+
+
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

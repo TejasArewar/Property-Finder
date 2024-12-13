@@ -1,0 +1,533 @@
+{% include 'header.html' %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link href='https://fonts.googleapis.com/css?family=Alkalami' rel='stylesheet'>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+
+    <style>
+        body {
+            background: url("{% static 'property_bg.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            background-color: #f8f9fa;
+            font-family: 'Alkalami';
+            color: black;
+        }
+
+        #map {
+            height: 700px;
+            width: 70%;
+            border: 5px solid #4EA685;
+            border-radius: 10px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card img {
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover img {
+            transform: scale(1.05);
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+
+    <!-- Slider -->
+
+    <div style="position: relative">
+
+        <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="3"
+                    aria-label="Slide 4"></button>
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="4"
+                    aria-label="Slide 5"></button>
+            </div>
+
+            <div class="carousel-inner">
+                <div class="carousel-item active" data-bs-interval="2000">
+                    <img src="{% static 'slider1.jpg' %}" height="600px" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>Best Row Houses</h2>
+                        <p>Stylishly designed attached homes with shared walls, offering a blend of community living and
+                            individual privacy.</p>
+                    </div>
+                </div>
+
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="{% static 'slider2.jpg' %}" height="600px" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>Luxury Bungalows</h2>
+                        <p>Elegant, standalone single-story homes with spacious layouts and private outdoor spaces.</p>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <img src="{% static 'slider3.jpg' %}" height="600px" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>Eco-Friendly Colony</h2>
+                        <p>Sustainable living spaces featuring green architecture, energy-efficient designs, and
+                            eco-conscious amenities.</p>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <img src="{% static 'slider4.jpg' %}" height="600px" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>Modern Appartments</h2>
+                        <p>Contemporary multi-story residences with state-of-the-art amenities, smart designs, and urban
+                            convenience.</p>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <img src="{% static 'slider5.jpg' %}" height="600px" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>Luxury Villa</h2>
+                        <p>Luxurious, standalone homes with expansive interiors, private gardens, and premium lifestyle
+                            features.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+
+        </div>
+
+    </div>
+    <!-- Slider End -->
+
+    <!-- Video Start -->
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin: 40px 40px 10px 40px;">
+        <!-- Video -->
+        <div class="card mb-3 shadow-lg" style="flex: 1; margin-left: 20px;">
+            <video width="100%" height="380px" controls autoplay muted loop>
+                <source src="{% static 'video.mp4' %}">
+                Your browser does not support the video tag.
+            </video>
+            <div class="card-body">
+                <h4 class="card-title">Have a look <i class="fa-solid fa-video"></i></h4>
+                <p class="card-text">
+                    With detailed listings, interactive maps, and advanced filters, finding your ideal
+                    place has never been easier. Watch this quick guide to see how Property Finder helps you navigate
+                    the world of real estate with ease and convenience.</p>
+            </div>
+        </div>
+
+
+
+        <!-- Card -->
+        <div class="card mb-3 shadow-lg" style="flex: 1; margin-left: 20px;">
+            <img src="{% static 'location.jpg' %}" class="card-img-top" alt="..." height="350px">
+            <div class="card-body">
+                <h4 class="card-title">Property Finder <i style="color: red;" class="fa-solid fa-location-dot"></i></h4>
+                <p class="card-text">
+                    At Property Finder, we are dedicated to simplifying the real estate journey.
+                    Whether you are buying, renting, or selling, our platform connects you to a wide range of
+                    properties, trusted agents, and market insights, ensuring a seamless and informed experience.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video End -->
+
+
+
+    <!-- Location Start -->
+
+    <div id="location-container" style="display: none;">
+        {% for loc in location %}
+        <input type="text" name="propertyname" id="propertyname_{{loc.id}}" class="form-control"
+            value="{{ loc.propertyname }}"><br><br>
+        <input type="text" name="price" id="price_{{loc.id}}" class="form-control" value="{{ loc.price }}"><br><br>
+        <input type="text" name="city" id="city_{{loc.id}}" class="form-control" value="{{ loc.city }}"><br><br>
+        <input type="number" name="latitude" id="latitude_{{loc.id}}" class="form-control"
+            value="{{ loc.latitude }}"><br><br>
+        <input type="number" name="longitude" id="longitude_{{loc.id}}" class="form-control"
+            value="{{ loc.longitude }}"><br><br>
+        <input type="text" name="image" id="image_{{loc.id}}" class="form-control" value="{{ loc.image.url }}"><br><br>
+        {% endfor %}
+    </div>
+
+
+
+    <!-- Map Start -->
+
+
+
+    <div style="display: flex; justify-content: center; margin: 40px 40px 10px 40px;">
+        <title>Registered Properties</title>
+        <div class="shadow-lg" id='map'></div>
+
+        <script>
+            let locations = [];
+            let locationContainer = document.getElementById('location-container');
+            let inputs = locationContainer.querySelectorAll('input');
+
+            for (let i = 0; i < inputs.length; i += 6) {
+            let propertyname = inputs[i].value;
+            let price = inputs[i + 1].value;
+            let city = inputs[i + 2].value;
+            let latitude = inputs[i + 3].value;
+            let longitude = inputs[i + 4].value;
+            let image = inputs[i + 5].value;
+            locations.push({
+                city: city,
+                latitude: latitude,
+                longitude: longitude,
+                propertyname: propertyname,
+                price: price,
+                image: image
+            });
+        }
+
+            const properties = L.layerGroup();
+
+            for (let i = 0; i < locations.length; i++) {
+                L.marker([locations[i].latitude, locations[i].longitude])
+                    .bindPopup(`
+                        <b>Name :</b> ${locations[i].propertyname}<br>
+                        <b>Price :</b> ${locations[i].price} ₹<br>
+                        <b>City :</b> ${locations[i].city}<br>
+                        <a href="/login/" target="_blank"><img src="${locations[i].image}" style="width:90px; height:80px; margin-top: 10px;"></a>
+                    `)
+                    .addTo(properties);
+            }
+
+            const mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+            const mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+            const streets = L.tileLayer(mbUrl, { id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr });
+
+            const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            });
+
+
+            const map = L.map('map', {
+                center: [19.957495, 79.295469],
+                zoom: 4,
+                layers: [osm, properties]
+            });
+
+            const baseLayers = {
+                'OpenStreetMap': osm,
+                'Streets': streets
+            };
+
+            const overlays = {
+                'Properties': properties
+            };
+
+            const layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+
+
+            const satellite = L.tileLayer(mbUrl, { id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr });
+
+            layerControl.addBaseLayer(satellite, 'Satellite');
+
+        </script>
+
+    </div>
+
+
+    <!-- Map End -->
+
+
+    <!-- Card Start -->
+
+    <div class="container-fluid p-5 mt-5 rounded">
+        <div class="row justify-content-center">
+            <!-- Card 1 -->
+            <div class="col-lg-3 col-md-6 d-flex justify-content-center">
+                <div class="card m-3 shadow-lg" style="width: 100%; max-width: 400px;" id="services">
+                    <img src="{% static 'services.jpg' %}" height="250px" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h3 class="card-title">Services</h3>
+                        <p class="card-text">
+                            Property Finder services help users buy, rent, or sell real estate with ease, offering
+                            detailed property listings, advanced search filters, and market insights. They provide
+                            personalized recommendations and access to trusted agents for a seamless property search
+                            experience.
+                        </p>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modal1">
+                            Learn more
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-lg-3 col-md-6 d-flex justify-content-center">
+                <div class="card m-3 shadow-lg" style="width: 100%; max-width: 400px;">
+                    <img src="{% static 'technology.jpg' %}" height="250px" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h3 class="card-title">Technology</h3>
+                        <p class="card-text">In the modern property market, technology plays a pivotal role in
+                            transforming the way buyers, renters, and investors explore and secure real estate. Advanced
+                            tools such as search algorithms, virtual tours, and geolocation features, ensure
+                            users find their ideal property with precision.</p>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modal2">
+                            Learn more
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-lg-3 col-md-6 d-flex justify-content-center">
+                <div class="card m-3 shadow-lg" style="width: 100%; max-width: 400px;" id="aboutus">
+                    <img src="{% static 'aboutus.jpg' %}" height="250px" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h3 class="card-title">About Us</h3>
+                        <p class="card-text">Welcome to Property Finder, your trusted partner in finding the perfect
+                            property. We are dedicated to simplifying the real estate journey, offering a seamless
+                            platform where buyers, renters, and investors can explore a wide range of properties
+                            tailored to their unique needs.</p>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modal3">
+                            Learn more
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="col-lg-3 col-md-6 d-flex justify-content-center">
+                <div class="card m-3 shadow-lg" style="width: 100%; max-width: 400px;">
+                    <img src="{% static 'moreinfo.jpg' %}" height="250px" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h3 class="card-title">More Info</h3>
+                        <p class="card-text">Welcome to Property Finder Your Ultimate Property Finding tool.<br>
+                            Looking for your dream home or the perfect investment property? Property Finder is here
+                            to make the process seamless, efficient, and tailored to your needs.</p>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modal4">
+                            Learn more
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Card 1 -->
+    <div class="modal fade" id="modal1" tabindex="-1" aria-labelledby="modal1Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal1Label">Services</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Property Finder services streamline the process of buying, renting, or selling real estate.
+                        These platforms connect users with properties that meet their needs, offering tools like
+                        advanced search filters, price comparisons, and virtual tours. They provide detailed listings of
+                        residential, commercial, and rental properties with key information such as location, pricing,
+                        amenities, and nearby facilities.<br><br>
+
+                        Additional features may include ---> <br>
+                        * Agent Assistance : Access to trusted real estate agents for guidance.<br>
+                        * Market Insights : Real-time data on property trends and market values.<br>
+                        * Personalized Recommendations : Tailored suggestions based on user preferences.<br><br>
+                        These services are ideal for individuals or businesses looking to navigate the property market
+                        efficiently and make informed decisions.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="modal fade" id="modal2" tabindex="-1" aria-labelledby="modal2Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal2Label">Technology</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        In the modern property market, technology plays a pivotal role in transforming the way buyers,
+                        renters, and investors explore and secure real estate. Advanced tools, such as AI-powered search
+                        algorithms, virtual tours, and geolocation features, ensure users find their ideal property with
+                        precision and ease.<br><br>
+
+                        Key features include ---> <br>
+
+                        * Smart Search Filters : Customizable options allow users to refine results based on budget,
+                        location, property type, and amenities.<br>
+                        * Interactive Maps : Provide insights into nearby schools, transportation links, and
+                        neighborhood
+                        amenities.<br>
+                        * Virtual and Augmented Reality : Enable immersive property tours from anywhere, offering a
+                        detailed view of interiors and exteriors.<br>
+                        * AI Recommendations : Suggest properties aligned with user preferences and browsing
+                        behavior.<br>
+                        * Secure Online Transactions : Ensure a smooth and safe buying or renting process through
+                        encrypted
+                        platforms.<br>
+                        By leveraging cutting-edge technology, property finder websites streamline the journey from
+                        search to sale, providing convenience, accuracy, and a personalized experience for every user.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="modal fade" id="modal3" tabindex="-1" aria-labelledby="modal3Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal3Label">About Us</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Welcome to Property Finder, your trusted partner in finding the perfect property. We are
+                        dedicated to simplifying the real estate journey, offering a seamless platform where buyers,
+                        renters, and investors can explore a wide range of properties tailored to their unique
+                        needs.<br>
+
+                        Our mission is to connect people with their dream homes or investment opportunities through
+                        innovative technology, user-friendly tools, and exceptional customer support. Whether you're
+                        searching for a cozy apartment, a spacious family home, or a prime commercial space, we make it
+                        easy to find properties that fit your lifestyle and budget.<br><br>
+
+                        At Property Finder, we pride ourselves on ---> <br>
+
+                        * A Vast Property Network : Featuring diverse listings in prime locations.<br>
+                        * Cutting-Edge Tools : Advanced search filters, interactive maps, and virtual tours to enhance
+                        your
+                        experience.<br>
+                        * Expert Guidance : Reliable advice and insights to help you make informed decisions.<br>
+                        * Customer-Centric Approach : Your satisfaction is at the heart of everything we do.<br><br>
+
+                        Join thousands of satisfied users who have trusted Property Finder to turn their property
+                        dreams into reality. Discover the future of real estate with us!
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="modal fade" id="modal4" tabindex="-1" aria-labelledby="modal4Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal4Label">More Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Looking for your dream home or the perfect investment property? Property Finder is here to
+                        make the process seamless, efficient, and tailored to your needs.<br><br>
+
+                        Why Choose Us?<br>
+                        * Extensive Listings : Explore a wide range of properties, from cozy apartments to luxurious
+                        villas, across prime locations.<br>
+                        * Smart Search Tools : Refine your search with intuitive filters based on budget, location,
+                        property type, size, and amenities.<br>
+                        * Interactive Maps : Discover neighborhood highlights, including schools, parks, shopping
+                        centers,
+                        and public transportation.<br>
+                        * Virtual Tours : Experience properties like never before with 360-degree views and virtual
+                        walk-throughs.<br>
+                        * AI-Powered Recommendations : Receive personalized property suggestions based on your
+                        preferences
+                        and search history.<br>
+                        * Secure Communication : Connect with trusted agents and property owners directly through our
+                        secure platform.<br><br>
+
+                        Services We Offer ---><br>
+
+                        * For Buyers and Renters : Browse verified properties with detailed descriptions, high-quality
+                        images, and virtual tours.<br>
+                        * For Sellers and Landlords : List your property effortlessly and reach a broad audience of
+                        potential buyers or tenants.<br>
+                        * For Investors : Find lucrative real estate opportunities with insights on market trends and
+                        property valuations.<br><br>
+
+                        Our Mission ---><br>
+
+                        At Property Finder, we aim to simplify the property search process, empower your decisions,
+                        and help you find a place you all love to call home.<br><br>
+
+                        Start your property journey today at Property Finder. Let us help you make your dream
+                        property a reality!
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Card End -->
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>
