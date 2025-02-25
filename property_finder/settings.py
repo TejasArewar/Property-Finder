@@ -140,7 +140,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'tejas.arewar.ta@gmail.com'
-EMAIL_HOST_PASSWORD = 'nzfg qyyz xywz uczm'
+EMAIL_HOST_PASSWORD = 'nxdf yijp nszf ryna'
 
 
 RAZORPAY_KEY_ID = 'rzp_test_D7Q7VupizUM6in'

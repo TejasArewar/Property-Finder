@@ -441,11 +441,12 @@
                                             <p class="card-text">State : {{ prop.state }}</p>
 
                                             <div class="d-flex justify-content-between">
-                                                {% if is_subscribed %}
+                                                
                                                 <a href="https://www.google.com/maps/dir//{{ prop.latitude }},{{ prop.longitude }}/@19.9909572,73.7462125,761m/data=!3m2!1e3!4b1!4m2!4m1!3e9?entry=ttu&g_ep=EgoyMDI0MTEyNC4xIKXMDSoASAFQAw%3D%3D"
                                                     class="btn btn-primary" title="View on Google Map"
                                                     target="_blank">Google Map</a>
 
+                                                {% if is_subscribed %}
                                                 <form method="POST" class="d-inline"
                                                     onsubmit="return sendContactAlert('{{ prop.propertyname }}')">
                                                     {% csrf_token %}
@@ -454,13 +455,12 @@
                                                         class="btn btn-success">Contact</button>
                                                 </form>
                                                 {% else %}
-                                                <button class="btn btn-secondary" disabled>Google Map</button>
                                                 <button class="btn btn-secondary" disabled>Contact</button>
                                             {% endif %}
                                             </div>
                                             
                                             {% if not is_subscribed %}
-                                            <p class="text-primary">Please buy Premium to access <b>Contact</b> and <b>Google Map</b>.</p>
+                                            <br><p class="text-primary">Please buy Premium to access <b>Contact.</b></p>
                                             {% endif %}
 
                                             <hr>

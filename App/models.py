@@ -6,6 +6,7 @@ class user_signup(models.Model) :
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
     confirm_password = models.CharField(max_length=100)
+    email_otp = models.CharField(max_length=6, blank=True, null=True)
 
     def __str__(self):
         return self.username

@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from App.models import user_signup, Property_Register, Profile_pictures, Payment
 from django.contrib import messages
+import random
 from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.exceptions import ValidationError
@@ -81,6 +82,55 @@ def logout(request) :
         request.session.flush()
         messages.success(request, "Logged out successfully.")
     return redirect('/login/')
+
+
+def forgot_password(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        otp = request.POST.get('otp')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Step 1: Check if the username exists
+        try:
+            user = user_signup.objects.get(username=username)
+        except user_signup.DoesNotExist:
+            messages.error(request, "Username does not exist")
+            return render(request, 'forgot_password.html')
+
+        # Step 2: Handle sending the OTP via email
+        if 'send_otp' in request.POST:  # If OTP is being sent
+            otp_code = random.randint(1000,9999)  # Generate OTP
+            user.email_otp = otp_code  # Store OTP temporarily (You may store in session or database)
+            user.save()
+            # Send OTP to user's email
+            send_mail(
+                'Your OTP for Password Reset',
+                f'Your OTP for password reset is: {otp_code}',
+                settings.EMAIL_HOST_USER,  # Use your email settings
+                [user.email],
+                fail_silently=False,
+            )
+            messages.success(request, "OTP has been sent to your email")
+            return render(request, 'forgot_password.html')
+
+        # Step 3: Validate OTP
+        if otp == user.email_otp:
+            # Step 4: Check if passwords match and update
+            if password == confirm_password:
+                user.set_password(password)  # Set the new password
+                user.save()  # Save user with updated password
+                messages.success(request, "Your password has been updated successfully")
+                return redirect('/login/')  # Redirect to login page
+            else:
+                messages.error(request, "Passwords do not match")
+                return render(request, 'forgot_password.html')
+
+        else:
+            messages.error(request, "Invalid OTP")
+            return render(request, 'forgot_password.html')
+
+    return render(request, 'forgot_password.html')
 
 
 
