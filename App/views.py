@@ -91,37 +91,32 @@ def forgot_password(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 
-        # Step 1: Check if the username exists
         try:
             user = user_signup.objects.get(username=username)
         except user_signup.DoesNotExist:
             messages.error(request, "Username does not exist")
             return render(request, 'forgot_password.html')
 
-        # Step 2: Handle sending the OTP via email
-        if 'send_otp' in request.POST:  # If OTP is being sent
-            otp_code = random.randint(1000,9999)  # Generate OTP
-            user.email_otp = otp_code  # Store OTP temporarily (You may store in session or database)
+        if 'send_otp' in request.POST:
+            otp_code = random.randint(1000,9999)
+            user.email_otp = otp_code
             user.save()
-            # Send OTP to user's email
             send_mail(
                 'Your OTP for Password Reset',
                 f'Your OTP for password reset is: {otp_code}',
-                settings.EMAIL_HOST_USER,  # Use your email settings
+                settings.EMAIL_HOST_USER,
                 [user.email],
                 fail_silently=False,
             )
             messages.success(request, "OTP has been sent to your email")
             return render(request, 'forgot_password.html')
 
-        # Step 3: Validate OTP
         if otp == user.email_otp:
-            # Step 4: Check if passwords match and update
             if password == confirm_password:
-                user.set_password(password)  # Set the new password
-                user.save()  # Save user with updated password
+                user.set_password(password)
+                user.save()
                 messages.success(request, "Your password has been updated successfully")
-                return redirect('/login/')  # Redirect to login page
+                return redirect('/login/')
             else:
                 messages.error(request, "Passwords do not match")
                 return render(request, 'forgot_password.html')
