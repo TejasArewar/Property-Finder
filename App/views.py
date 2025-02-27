@@ -102,7 +102,7 @@ def forgot_password(request):
             user.email_otp = otp_code
             user.save()
             send_mail(
-                'Your OTP for Password Reset',
+                'One Time Password for password Reset',
                 f'Your OTP for password reset is: {otp_code}',
                 settings.EMAIL_HOST_USER,
                 [user.email],
@@ -113,7 +113,10 @@ def forgot_password(request):
 
         if otp == user.email_otp:
             if password == confirm_password:
-                user.set_password(password)
+                user_signup.objects.create(
+                    password=password,
+                    confirm_password=confirm_password
+                    )
                 user.save()
                 messages.success(request, "Your password has been updated successfully")
                 return redirect('/login/')
