@@ -113,10 +113,6 @@ def forgot_password(request):
 
         if otp == user.email_otp:
             if password == confirm_password:
-                user_signup.objects.create(
-                    password=password,
-                    confirm_password=confirm_password
-                    )
                 user.save()
                 messages.success(request, "Your password has been updated successfully")
                 return redirect('/login/')
